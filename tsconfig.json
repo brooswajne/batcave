@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"target": "es2017",
+		"declaration": true,
+		"declarationDir": "./types",
+		"noEmitOnError": true,
+		"rootDir": "./utils",
+		"strict": true
+	}
+}

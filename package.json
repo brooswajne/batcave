@@ -1,0 +1,35 @@
+{
+  "name": "js-utils",
+  "version": "0.0.1",
+  "description": "Utilities",
+  "author": "Willem Garnier",
+  "license": "MIT",
+  "main": "build/batcave.umd.js",
+  "module": "build/batcave.esm.js",
+  "types": "types/index.d.ts",
+  "scripts": {
+    "test": "mocha --require ts-node/register ./**/*.test.ts",
+    "lint": "eslint .",
+    "build": "rollup -c && agadoo"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^5.0.1",
+    "@types/mocha": "^7.0.2",
+    "@typescript-eslint/eslint-plugin": "^3.5.0",
+    "@typescript-eslint/parser": "^3.5.0",
+    "agadoo": "^2.0.0",
+    "eslint": "^6.8.0",
+    "mocha": "^8.0.1",
+    "rollup": "^2.18.2",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BROOSWAJNE/js-utils.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BROOSWAJNE/js-utils/issues"
+  },
+  "keywords": []
+}
