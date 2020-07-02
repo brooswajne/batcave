@@ -1,7 +1,7 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (global = global || self, factory(global['js-utils'] = {}));
+    (global = global || self, factory(global.batcave = {}));
 }(this, (function (exports) { 'use strict';
 
     /* Asynchronous versions of array methods */
@@ -55,6 +55,42 @@
             running: () => new Set(running),
         };
     }
+    class TimeoutExpiredError extends Error {
+        constructor(func, time) {
+            const funcName = func.name || '<anonymous>';
+            const msg = `Timeout-wrapped function ${funcName} took longer than ${time}ms to resolve`;
+            super(msg);
+            this.name = this.constructor.name;
+        }
+    }
+    /**
+     * Wraps a promise-returning function into another asynchronous
+     * function which will reject if the original wrapped function
+     * takes longer than the specified time to resolve.
+     * @param {Function} func
+     * The function to wrap.
+     * @param {number} [ms=5000]
+     * The time to wait before rejecting.
+     * @param {object} [options]
+     * @param {boolean} [options.rejectOnTimeout]
+     * If false, the promise will just be left pending rather than
+     * rejecting if the time limit expires.
+     */
+    function timeout(func, ms = 5000, { rejectOnTimeout = true, } = {}) {
+        return function timeoutified(...args) {
+            return new Promise((resolve, reject) => {
+                let overran = false;
+                const kill = setTimeout(() => {
+                    if (rejectOnTimeout)
+                        reject(new TimeoutExpiredError(func, ms));
+                    overran = true;
+                }, ms);
+                func.apply(this, args)
+                    .finally(() => clearTimeout(kill))
+                    .then((ret) => !overran && resolve(ret), (err) => !overran && reject(err));
+            });
+        };
+    }
 
     /* Iterator transform methods */
     function filter$1(iterator, filterFn, thisArg) {
@@ -101,6 +137,7 @@
     exports.asyncEvery = every;
     exports.asyncFilter = filter;
     exports.asyncQueue = queue;
+    exports.asyncTimeout = timeout;
     exports.iteratorFilter = filter$1;
     exports.iteratorMap = map;
     exports.iteratorReduce = reduce;

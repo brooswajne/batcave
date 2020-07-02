@@ -1,7 +1,8 @@
 export {
-	filter as asyncFilter,
 	every as asyncEvery,
+	filter as asyncFilter,
 	queue as asyncQueue,
+	timeout as asyncTimeout,
 } from './async';
 export {
 	filter as iteratorFilter,

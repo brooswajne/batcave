@@ -14,7 +14,7 @@ export default {
 		dir: './',
 		entryFileNames: main,
 		format: 'umd',
-		name: 'js-utils',
+		name: 'batcave',
 	} ],
 	plugins: [ typescript( ) ],
 };

@@ -49,6 +49,42 @@ function queue(concurrencyLimit = 2) {
         running: () => new Set(running),
     };
 }
+class TimeoutExpiredError extends Error {
+    constructor(func, time) {
+        const funcName = func.name || '<anonymous>';
+        const msg = `Timeout-wrapped function ${funcName} took longer than ${time}ms to resolve`;
+        super(msg);
+        this.name = this.constructor.name;
+    }
+}
+/**
+ * Wraps a promise-returning function into another asynchronous
+ * function which will reject if the original wrapped function
+ * takes longer than the specified time to resolve.
+ * @param {Function} func
+ * The function to wrap.
+ * @param {number} [ms=5000]
+ * The time to wait before rejecting.
+ * @param {object} [options]
+ * @param {boolean} [options.rejectOnTimeout]
+ * If false, the promise will just be left pending rather than
+ * rejecting if the time limit expires.
+ */
+function timeout(func, ms = 5000, { rejectOnTimeout = true, } = {}) {
+    return function timeoutified(...args) {
+        return new Promise((resolve, reject) => {
+            let overran = false;
+            const kill = setTimeout(() => {
+                if (rejectOnTimeout)
+                    reject(new TimeoutExpiredError(func, ms));
+                overran = true;
+            }, ms);
+            func.apply(this, args)
+                .finally(() => clearTimeout(kill))
+                .then((ret) => !overran && resolve(ret), (err) => !overran && reject(err));
+        });
+    };
+}
 
 /* Iterator transform methods */
 function filter$1(iterator, filterFn, thisArg) {
@@ -92,4 +128,4 @@ function wrap(iterator) {
     };
 }
 
-export { every as asyncEvery, filter as asyncFilter, queue as asyncQueue, filter$1 as iteratorFilter, map as iteratorMap, reduce as iteratorReduce, wrap as iteratorWrap };
+export { every as asyncEvery, filter as asyncFilter, queue as asyncQueue, timeout as asyncTimeout, filter$1 as iteratorFilter, map as iteratorMap, reduce as iteratorReduce, wrap as iteratorWrap };
