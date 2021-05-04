@@ -1,3 +1,5 @@
 # batcave
 
-Inspired by Rich Harris' [yootils](https://github.com/Rich-Harris/yootils), but for my own use.
+Just a fun little playground for cool little utilities and exciting functionality to play around with.
+
+Originally inspired by Rich Harris' [yootils](https://github.com/Rich-Harris/yootils).
